@@ -1,0 +1,32 @@
+{% extends 'base.html' %} 
+{% block title %}Control de Servomotor{% endblock %} 
+{%block content %}
+
+<div class="container d-flex flex-column justify-content-center align-items-center" style="min-height: 100vh; background-color: #f8f9fa;">
+    <div class="card shadow p-4 mb-5 bg-white rounded" style="width: 400px;">
+        <h2 class="text-center mb-4">Control de Servomotor</h2>
+
+        {% if message %}
+            <div class="alert {% if 'Failed' in message or 'Invalid' in message %}alert-danger{% else %}alert-success{% endif %} mb-3">
+                {{ message }}
+            </div>
+        {% endif %}
+
+        <form id="contactForm" name="sentMessage" action="{{ url_for('home') }}" method="post">
+            <div class="mb-3">
+                <div class="d-flex align-items-center mb-2">
+                    <label for="angle" class="form-label me-3 fw-bold mb-0" style="width: 80px;">Ángulo:</label>
+                    <input type="number" class="form-control" id="angle" name="angle" min="0" max="180" 
+                            value="{{ degrees }}" placeholder="Ángulo (0-180)" required>
+                </div>
+                <div class="form-text text-end">Valor entre 0° y 180°</div>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
