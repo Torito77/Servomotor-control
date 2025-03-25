@@ -11,19 +11,20 @@ Bootstrap5(app)
 
 SERIAL_PORT = 'COM3'  
 BAUD_RATE = 9600
+try:
+    arduino = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
+except serial.SerialException as e:
+    print(f"Error al abrir el puerto COM3: {e}")
+    arduino = None
+else:
+    print("Connected succesfully")
+
+
 def send_to_arduino(angle):
     try:
-        # Open the serial connection
-        ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
-        time.sleep(2)  # Wait for the Arduino to initialize
-        
         # Send the angle value followed by a newline
-        ser.write(f"{angle}\n".encode())
+        arduino.write(f"{angle}\n".encode())
         time.sleep(0.1)  # Give Arduino time to process
-        
-        # Close the connection
-        ser.close()
-        return True
     
     except Exception as e:
         print(f"Error communicating with Arduino: {e}")
@@ -34,13 +35,13 @@ def send_to_arduino(angle):
 @app.route('/', methods=["GET","POST"])
 def home():
     angle = 90
-    
+    message = None
     if request.method == 'POST':
         
         angle = request.form.get('angle', type=int)
-        send_to_arduino(angle)
         
         if angle is not None and (0 <= angle <= 180):
+            print(angle)
             if send_to_arduino(angle):
                 message = f"Successfully sent angle: {angle}°"
             else:
@@ -52,4 +53,4 @@ def home():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
